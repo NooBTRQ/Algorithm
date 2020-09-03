@@ -71,6 +71,82 @@ namespace Algorithm
 
             return result;
         }
+
+
+        public static Dictionary<Node, Node> CopyRandomListDic = new Dictionary<Node, Node>();
+        /// <summary>
+        /// 138.复制带随机指针的链表
+        /// 给定一个链表，每个节点包含一个额外增加的随机指针，该指针可以指向链表中的任何节点或空节点。
+        /// 要求返回这个链表的 深拷贝。 
+        /// 我们用一个由 n 个节点组成的链表来表示输入/输出中的链表。每个节点用一个[val, random_index] 表示：
+        /// val：一个表示 Node.val 的整数。
+        /// random_index：随机指针指向的节点索引（范围从 0 到 n-1）；如果不指向任何节点，则为 null 。
+        /// </summary>
+        /// <param name="head"></param>
+        /// <returns></returns>
+        public static Node CopyRandomList(Node head)
+        {
+            
+            if (head == null) {
+                return null;
+            }
+
+            if (CopyRandomListDic.ContainsKey(head)) {
+                return CopyRandomListDic[head];
+            }
+
+            var newNode = new Node(head.val);
+            CopyRandomListDic.Add(head, newNode);
+            newNode.next = CopyRandomList(head.next);
+            newNode.random = CopyRandomList(head.random);
+            return newNode;
+        }
+
+        public static Node CopyRandomList2(Node head)
+        {
+
+            if (head == null)
+            {
+                return null;
+            }
+
+            var currentNode = head;
+            //先拷贝节点到当前节点的下一节点
+            while (currentNode != null) {
+                var newNode = new Node(currentNode.val);
+                newNode.random = currentNode.random;
+                newNode.next = currentNode.next;
+                currentNode.next = newNode;
+                currentNode = currentNode.next.next;
+            }
+            //替换节点中random的引用
+            currentNode = head;
+            while (currentNode != null) {
+                if (currentNode.random != null) {
+                    currentNode.random = currentNode.random.next;
+                }
+                
+            }
+            //分离两个链表
+            currentNode = head.next;
+            Node newHead = head.next;
+            while (currentNode != null) {
+                currentNode.next = currentNode.next.next;
+                currentNode = currentNode.next;
+            }
+            return newHead;
+        }
+
+        /// <summary>
+        /// 最长回文子串
+        /// 给定一个字符串 s，找到 s 中最长的回文子串。你可以假设 s 的最大长度为 1000。
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public string LongestPalindrome(string s)
+        {
+
+        }
     }
 
     public class ListNode
@@ -78,5 +154,19 @@ namespace Algorithm
         public int val;
         public ListNode next;
         public ListNode(int x) { val = x; }
+    }
+
+    public class Node
+    {
+        public int val;
+        public Node next;
+        public Node random;
+
+        public Node(int _val)
+        {
+            val = _val;
+            next = null;
+            random = null;
+        }
     }
 }
