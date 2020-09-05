@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Algorithm
@@ -101,7 +102,16 @@ namespace Algorithm
             newNode.random = CopyRandomList(head.random);
             return newNode;
         }
-
+        /// <summary>
+        /// 138.复制带随机指针的链表
+        /// 给定一个链表，每个节点包含一个额外增加的随机指针，该指针可以指向链表中的任何节点或空节点。
+        /// 要求返回这个链表的 深拷贝。 
+        /// 我们用一个由 n 个节点组成的链表来表示输入/输出中的链表。每个节点用一个[val, random_index] 表示：
+        /// val：一个表示 Node.val 的整数。
+        /// random_index：随机指针指向的节点索引（范围从 0 到 n-1）；如果不指向任何节点，则为 null 。
+        /// </summary>
+        /// <param name="head"></param>
+        /// <returns></returns>
         public static Node CopyRandomList2(Node head)
         {
 
@@ -113,42 +123,152 @@ namespace Algorithm
             var currentNode = head;
             //先拷贝节点到当前节点的下一节点
             while (currentNode != null) {
-                var newNode = new Node(currentNode.val);
-                newNode.random = currentNode.random;
-                newNode.next = currentNode.next;
-                currentNode.next = newNode;
+                var copyNode = new Node(currentNode.val);   
+                copyNode.random = currentNode.random;
+                copyNode.next = currentNode.next;
+                currentNode.next = copyNode;
                 currentNode = currentNode.next.next;
             }
             //替换节点中random的引用
             currentNode = head;
             while (currentNode != null) {
-                if (currentNode.random != null) {
-                    currentNode.random = currentNode.random.next;
+                if (currentNode.next.random != null) {
+                    currentNode.next.random = currentNode.next.random.next;
+                    
                 }
-                
+                if (currentNode.next.next != null)
+                {
+                    currentNode = currentNode.next.next;
+                }
+                else { 
+                    currentNode = null;
+                }           
             }
-            //分离两个链表
-            currentNode = head.next;
+            //分离旧链表
+            var currentOldNode = head;
+            var currentNewNode = head.next;
             Node newHead = head.next;
-            while (currentNode != null) {
-                currentNode.next = currentNode.next.next;
-                currentNode = currentNode.next;
+            while (currentOldNode != null) {
+                currentOldNode.next = currentOldNode.next.next;
+                if (currentNewNode.next != null) {
+                    currentNewNode.next = currentNewNode.next.next;
+                }
+               
+                currentOldNode = currentOldNode.next;
+                currentNewNode = currentNewNode.next;
             }
             return newHead;
         }
 
         /// <summary>
-        /// 最长回文子串
+        /// 5.最长回文子串
         /// 给定一个字符串 s，找到 s 中最长的回文子串。你可以假设 s 的最大长度为 1000。
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public string LongestPalindrome(string s)
+        public static string LongestPalindrome(string s)
         {
+            //动态规划
+            var knowledge = new bool[1000, 1000];
+            var result = "";
+            if (s == null) {
+                return result;
+            }
+            for (int i = 0; i < s.Length; i++) {
+                for (int j = 0; i + j < s.Length; j++) {
+                    int m = i + j;
+                    if (i == 0)
+                    {
+                        knowledge[j, m] = true;
 
+                    }
+                    else if (i == 1)
+                    {
+                        knowledge[j, m] = (s[j] == s[m]);
+                    }
+                    else
+                    {
+                        knowledge[j, m] = (knowledge[j + 1, m - 1] && (s[j] == s[m]));
+                    }
+
+                    if (knowledge[j, m] && i+1>result.Length) {
+                        result = s.Substring(j, i+1);
+                    }
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 206.反转链表
+        /// 反转一个单链表。
+        /// </summary>
+        /// <param name="head"></param>
+        /// <returns></returns>
+        public static ListNode ReverseList(ListNode head)
+        {
+            //迭代
+            if (head == null)
+            {
+                return null;
+            }
+            var currentNode = head.next;
+            var preNode = head;
+            while (currentNode != null)
+            {             
+                var nextNode = currentNode.next;
+                currentNode.next = preNode;
+                preNode = currentNode;
+                currentNode = nextNode;
+            }
+            head.next = null;
+            return preNode;
+        }
+
+        /// <summary>
+        /// 206.反转链表
+        /// 反转一个单链表。
+        /// </summary>
+        /// <param name="head"></param>
+        /// <returns></returns>
+        public static ListNode ReverseList1(ListNode head)
+        {
+            //递归
+            if (head == null || head.next == null) return head;
+            ListNode p = ReverseList1(head.next);
+            head.next.next = head;
+            head.next = null;
+            return p;
+        }
+
+        /// <summary>
+        /// 21.合并两个有序链表
+        /// 将两个升序链表合并为一个新的 升序 链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。 
+        /// </summary>
+        /// <param name="l1"></param>
+        /// <param name="l2"></param>
+        /// <returns></returns>
+        public static ListNode MergeTwoLists(ListNode l1, ListNode l2)
+        {
+            if (l1 == null)
+            {
+                return l2;
+            }
+            else if (l2 == null)
+            {
+                return l1;
+            }
+            else if (l1.val < l2.val)
+            {
+                l1.next = MergeTwoLists(l1.next, l2);
+                return l1;
+            }
+            else {
+                l2.next = MergeTwoLists(l2.next, l1);
+                return l2;
+            }
         }
     }
-
     public class ListNode
     {
         public int val;
