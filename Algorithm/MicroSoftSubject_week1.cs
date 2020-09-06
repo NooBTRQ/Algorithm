@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Algorithm
 {
-    public static class MicroSoftSubject
+    public static class MicroSoftSubject_week1
     {
         /// <summary>
         /// 1.返回两数之和
@@ -268,7 +268,95 @@ namespace Algorithm
                 return l2;
             }
         }
+
+        /// <summary>
+        /// 200.岛屿数量
+        /// 给你一个由 '1'（陆地）和 '0'（水）组成的的二维网格，请你计算网格中岛屿的数量。
+        ///岛屿总是被水包围，并且每座岛屿只能由水平方向或竖直方向上相邻的陆地连接形成。
+        ///此外，你可以假设该网格的四条边均被水包围。
+        /// </summary>
+        /// <param name="grid"></param>
+        /// <returns></returns>
+        public static int NumIslands(char[][] grid)
+        {
+            //DFS(深度优先搜索)
+            //扫描整个二维网络，对每个值为 '1' 的单元格进行深度搜索，将临近的单元格标记为'0'，深度搜索的次数则为岛屿次数
+            if (grid == null) return 0;
+            int rowCounts = grid.Length;
+            if (rowCounts == 0) return 0;
+            int columnCounts = grid[0].Length;
+            int islandNum = 0;
+            for (int i = 0; i < rowCounts; i++) {
+                for (int j = 0; j < columnCounts; j++) {
+                    if (grid[i][j] == '1') {
+                        islandNum++;
+                        //进行深度搜索
+                        DepthFirstSearch(grid, i, j);
+                    }
+                }
+            }
+            return islandNum;
+        }
+        public static void DepthFirstSearch(char[][] grid,int row,int column) {
+
+            if (grid[row][column] == '0') return;
+            grid[row][column] = '0';
+            if (row - 1 >= 0) DepthFirstSearch(grid, row - 1, column);
+            if (row + 1 < grid.Length) DepthFirstSearch(grid, row + 1, column);
+            if (column - 1 >= 0) DepthFirstSearch(grid, row, column - 1);
+            if (column + 1 <grid[0].Length) DepthFirstSearch(grid, row, column + 1);
+        }
     }
+
+    /// <summary>
+    /// 146.LRU缓存机制
+    /// 
+    /// </summary>
+    public class LRUCache
+    {
+
+        public Dictionary<int, int> CacheData;
+        public List<int> KeyList;
+        public int Capacity;
+
+        public LRUCache(int capacity)
+        {
+            CacheData = new Dictionary<int, int>();
+            KeyList = new List<int>();
+            Capacity = capacity;
+        }
+
+        public int Get(int key)
+        {
+            if (CacheData.ContainsKey(key)) {
+
+                KeyList.Remove(key);
+                KeyList.Add(key);
+
+                return CacheData[key];
+            } 
+            return -1;
+        }
+
+        public void Put(int key, int value)
+        {
+            if (CacheData.Keys.Count == Capacity && !CacheData.ContainsKey(key)) {
+                CacheData.Remove(KeyList[0]);
+                KeyList.RemoveAt(0);
+            }
+            if (CacheData.ContainsKey(key))
+            {
+                CacheData[key] = value;
+                KeyList.Remove(key);
+                KeyList.Add(key);
+            }
+            else {
+                CacheData.Add(key, value);
+                KeyList.Add(key);
+            }
+        }
+    }
+
     public class ListNode
     {
         public int val;
