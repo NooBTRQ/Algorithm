@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Algorithm
 {
-    public static class MicroSoftSubject_week1
+    public static class MicroSoftSubject_Week1
     {
         /// <summary>
         /// 1.返回两数之和
