@@ -74,5 +74,59 @@ namespace Algorithm
 
             return result;
         }
+
+        /// <summary>
+        /// 8. 字符串转换整数 (atoi)
+        /// 请你来实现一个 atoi 函数，使其能将字符串转换成整数。
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static int MyAtoi(string str)
+        {
+            var am = new Automaton();
+            for (int i = 0; i < str.Length; i++) {
+                am.InputChar(str[i]);
+            }
+            return (int)(am.sign * am.num);
+        }
+    }
+
+    public class Automaton {
+
+        private string state = "start";
+        /// <summary>
+        /// 0." "  1.+/-  2.number  3.other
+        /// </summary>
+        private Dictionary<string,List<string>> stateMap = new Dictionary<string, List<string>>{ 
+             {"start",new List<string> { "start","signed","number","end"} },
+             {"signed",new List<string>{ "end","end","number","end"} },
+             {"number",new List<string>{"end","end","number","end" } },
+             {"end",new List<string>{ "end","end","end","end"} } };
+        private int ChangeState(char c) {
+
+            if (c == ' ') return 0;
+            if (c == '-' || c == '+') return 1;
+            int number;
+            if (int.TryParse(c.ToString(), out number)) return 2;
+            return 3;
+        }
+
+        public int sign = 1;
+        public long num = 0;
+        public void InputChar(char c) {
+
+            state = stateMap[state][ChangeState(c)];
+            if (state == "number")
+            {
+                num = num * 10 + c - '0';
+                long minValue = 2147483648;
+                num = sign == 1 ? Math.Min(num, int.MaxValue) : Math.Min(num, minValue);
+                
+            }
+            else if (state == "signed")
+            {
+                sign = c == '+' ? 1 : -1;
+            }
+        }
     }
 }
