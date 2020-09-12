@@ -17,7 +17,7 @@ namespace Algorithm
         /// <returns></returns>
         public static string ReverseWords(string s)
         {
-            return string.Join(" ",s.Trim().Split(' ').Where(e => !string.IsNullOrEmpty(e)).Reverse());
+            return string.Join(" ", s.Trim().Split(' ').Where(e => !string.IsNullOrEmpty(e)).Reverse());
         }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace Algorithm
             }
             int i = 0;
             int j = 0;
-            var alreadyPass = new int[matrix.Length,matrix[0].Length];
+            var alreadyPass = new int[matrix.Length, matrix[0].Length];
             return null;
         }
 
@@ -55,10 +55,10 @@ namespace Algorithm
             //滑动窗口
             var charSet = new HashSet<char>();
             int rIndex = 0;
-            for (int i = 0; i < s.Length;i++) {
+            for (int i = 0; i < s.Length; i++) {
                 if (i != 0) {
 
-                    charSet.Remove(s[i-1]);
+                    charSet.Remove(s[i - 1]);
                 }
                 while (rIndex < s.Length && !charSet.Contains(s[rIndex])) {
 
@@ -83,11 +83,110 @@ namespace Algorithm
         /// <returns></returns>
         public static int MyAtoi(string str)
         {
+            ///有限状态机
             var am = new Automaton();
             for (int i = 0; i < str.Length; i++) {
                 am.InputChar(str[i]);
             }
             return (int)(am.sign * am.num);
+        }
+
+        /// <summary>
+        /// 33. 搜索旋转排序数组
+        /// 假设按照升序排序的数组在预先未知的某个点上进行了旋转。
+        ///(例如，数组[0, 1, 2, 4, 5, 6, 7] 可能变为[4, 5, 6, 7, 0, 1, 2] )。
+        ///搜索一个给定的目标值，如果数组中存在这个目标值，则返回它的索引，否则返回 -1 。
+        ///你可以假设数组中不存在重复的元素。
+        ///你的算法时间复杂度必须是 O(log n) 级别。
+        /// </summary>
+        /// <param name="nums"></param>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public static int Search(int[] nums, int target)
+        {
+            if (nums == null || nums.Length == 0) {
+                return -1;
+            }
+            if (nums.Length == 1 && nums[0] != target) {
+
+                return -1;
+            }
+            if (nums.Length == 1 && nums[0] == target) {
+                return 0;
+            }
+
+            int l = 0;
+            int r = nums.Length - 1;
+            int mid = 0;
+            while (l <= r) {
+
+                mid = (l + r) / 2;
+                if (nums[mid] == target) return mid;
+                if (nums[0] <= nums[mid])
+                {
+
+                    if (target >= nums[0] && target < nums[mid])
+                    {
+
+                        r = mid - 1;
+                    }
+                    else
+                    {
+
+                        l = mid + 1;
+                    }
+                }
+                else {
+                    if (target > nums[mid] && target <= nums[nums.Length - 1])
+                    {
+
+                        l = mid + 1;
+                    }
+                    else {
+
+                        r = mid - 1;
+                    }
+                }
+            }
+            return -1;
+        }
+
+        /// <summary>
+        /// 17. 电话号码的字母组合
+        /// 给定一个仅包含数字 2-9 的字符串，返回所有它能表示的字母组合。
+        /// 给出数字到字母的映射如下（与电话按键相同）。注意 1 不对应任何字母。
+        /// </summary>
+        /// <param name="digits"></param>
+        /// <returns></returns>
+        public static IList<string> LetterCombinations(string digits)
+        {
+            var result = new List<string>();
+            if (string.IsNullOrEmpty(digits)) {
+
+                return result;
+            }
+            var numToString = new Dictionary<char, string>() { { '2', "abc" }, { '3', "def" }, { '4', "ghi" }, { '5', "jkl" }, { '6', "mno" }, { '7', "pqrs" }, { '8', "tuv" }, { '9', "wxyz" }};
+
+            BackTrack(result, numToString, digits, 0, new List<char>());
+            return result;
+        }
+
+        private static void BackTrack(List<string> combinations, Dictionary<char, string> numToString, string digits, int index, List<char> concatenateStr){
+
+            if (index == digits.Length)
+            {
+
+                combinations.Add(string.Join("",concatenateStr));
+            }
+            else {
+
+                var numStr = numToString[digits[index]];
+                for (int i = 0; i < numStr.Length; i++) {
+                    concatenateStr.Add(numStr[i]);
+                    BackTrack(combinations, numToString, digits, index+1, concatenateStr);
+                    concatenateStr.Remove(numStr[i]);
+                }
+            }
         }
     }
 
@@ -113,13 +212,14 @@ namespace Algorithm
 
         public int sign = 1;
         public long num = 0;
+        long minValue = 2147483648;
         public void InputChar(char c) {
 
             state = stateMap[state][ChangeState(c)];
             if (state == "number")
             {
                 num = num * 10 + c - '0';
-                long minValue = 2147483648;
+                
                 num = sign == 1 ? Math.Min(num, int.MaxValue) : Math.Min(num, minValue);
                 
             }
