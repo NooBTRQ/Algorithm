@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -171,6 +173,59 @@ namespace Algorithm
             return result;
         }
 
+        /// <summary>
+        /// 103. 二叉树的锯齿形层次遍历
+        /// 给定一个二叉树，返回其节点值的锯齿形层次遍历。（即先从左往右，再从右往左进行下一层遍历，以此类推，层与层之间交替进行）。
+        /// </summary>
+        /// <param name="root"></param>
+        /// <returns></returns>
+        public static IList<IList<int>> ZigzagLevelOrder(TreeNode root)
+        {
+            if (root == null) return new List<IList<int>>();
+            if (root.left == null && root.right == null) return new List<IList<int>>(){ new List<int>(){ root.val}};
+
+            var result = new List<IList<int>>();
+            var layerListDic = new Dictionary<int, List<int>>() { { 1,new List<int>() { root.val} },{ 2,new List<int>()} };
+            SearchTree(root,2, layerListDic);
+            int layer = 1;
+            while (true) {
+
+                if (!layerListDic.ContainsKey(layer)) break;
+
+                if (layerListDic[layer].Count > 0) {
+
+                    if (layer % 2 == 1)
+                    {
+                        result.Add(layerListDic[layer]);
+                    }
+                    else {
+                        layerListDic[layer].Reverse();
+                        result.Add(layerListDic[layer]);
+                    }
+                } 
+                layer++;
+            }
+
+            return result;
+        }
+
+        public static void SearchTree(TreeNode currentNode,int level,Dictionary<int,List<int>> levelListdic)
+        {
+
+            if (currentNode == null || (currentNode.left == null && currentNode.right == null))
+            {
+                return;
+            }
+
+            var currentList = levelListdic[level];
+            if(!levelListdic.ContainsKey(level +1)) levelListdic.Add(level + 1, new List<int>());
+
+            if (currentNode.left != null) currentList.Add(currentNode.left.val);
+            if (currentNode.right != null) currentList.Add(currentNode.right.val);
+            SearchTree(currentNode.left, level + 1, levelListdic);
+            SearchTree(currentNode.right, level + 1, levelListdic);
+        }
+
         private static void BackTrack(List<string> combinations, Dictionary<char, string> numToString, string digits, int index, List<char> concatenateStr){
 
             if (index == digits.Length)
@@ -184,7 +239,7 @@ namespace Algorithm
                 for (int i = 0; i < numStr.Length; i++) {
                     concatenateStr.Add(numStr[i]);
                     BackTrack(combinations, numToString, digits, index+1, concatenateStr);
-                    concatenateStr.Remove(numStr[i]);
+                    concatenateStr.RemoveAt(index);
                 }
             }
         }
@@ -228,5 +283,13 @@ namespace Algorithm
                 sign = c == '+' ? 1 : -1;
             }
         }
+    }
+
+    public class TreeNode
+    {
+        public int val;
+        public TreeNode left;
+        public TreeNode right;
+        public TreeNode(int x) { val = x; }
     }
 }
