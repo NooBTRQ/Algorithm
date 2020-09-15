@@ -6,3 +6,4 @@ D:\Program\Algorithm\Algorithm\obj\Debug\netstandard2.0\Algorithm.AssemblyInfo.c
 D:\Program\Algorithm\Algorithm\obj\Debug\netstandard2.0\Algorithm.csproj.CoreCompileInputs.cache
 D:\Program\Algorithm\Algorithm\obj\Debug\netstandard2.0\Algorithm.dll
 D:\Program\Algorithm\Algorithm\obj\Debug\netstandard2.0\Algorithm.pdb
+D:\Program\Algorithm\Algorithm\obj\Debug\netstandard2.0\Algorithm.csprojAssemblyReference.cache
