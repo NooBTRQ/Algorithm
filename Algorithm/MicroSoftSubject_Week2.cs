@@ -30,13 +30,29 @@ namespace Algorithm
         public static IList<int> SpiralOrder(int[][] matrix)
         {
             var result = new List<int>();
-            if (matrix == null || matrix.Length == 0) {
+            if (matrix == null || matrix.Length == 0)
+            {
                 return result;
             }
-            int i = 0;
-            int j = 0;
-            var alreadyPass = new int[matrix.Length, matrix[0].Length];
-            return null;
+            int l = 0;
+            int t = 0;
+            int r = matrix[0].Length - 1;
+            int b = matrix.Length - 1;
+            var totalCount = (r + 1) * (b + 1);
+            while (result.Count < totalCount)
+            {
+
+                for (int i = l; i <= r && t <= b; i++) result.Add(matrix[t][i]);
+                t++;
+                for (int i = t; i <= b && l <= r; i++) result.Add(matrix[i][r]);
+                r--;
+                for (int i = r; i >= l && t <= b; i--) result.Add(matrix[b][i]);
+                b--;
+                for (int i = b; i >= t && l <= r; i--) result.Add(matrix[i][l]);
+                l++;
+            }
+
+            return result;
         }
 
         /// <summary>

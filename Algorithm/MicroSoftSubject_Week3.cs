@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Xml;
 
 namespace Algorithm
 {
@@ -126,6 +128,74 @@ namespace Algorithm
             }
 
             return lson || rson || node.val == p.val || node.val == q.val;
+        }
+
+        /// <summary>
+        /// 48. Rotate Image
+        /// You are given an n x n 2D matrix representing an image, rotate the image by 90 degrees (clockwise).
+        /// You have to rotate the image in-place, which means you have to modify the input 2D matrix directly.DO NOT allocate another 2D matrix and do the rotation.
+        /// </summary>
+        /// <param name="matrix"></param>
+        public static void Rotate(int[][] matrix)
+        {
+            if (matrix == null || matrix.Length == 0) {
+
+                return ;
+            }
+            int rowCount = matrix.Length;
+            for (int i = 0; i < rowCount / 2;i++) {
+
+                int[] temp = matrix[i];
+                matrix[i] = matrix[rowCount - i - 1];
+                matrix[rowCount - i - 1] = temp;
+
+            }
+            for (int i = 0; i < rowCount; i++) {
+
+                for (int j = 0; j <= i; j++) {
+
+                    int temp = matrix[i][j];
+                    matrix[i][j] = matrix[j][i];
+                    matrix[j][i] = temp;
+                }
+            }
+        }
+
+        private static Dictionary<int, int> nodeMap = new Dictionary<int, int>();
+        /// <summary>
+        /// 105. Construct Binary Tree from Preorder and Inorder Traversal
+        /// Given preorder and inorder traversal of a tree, construct the binary tree.
+        /// </summary>
+        /// <param name="preorder"></param>
+        /// <param name="inorder"></param>
+        /// <returns></returns>
+        public static TreeNode BuildTree(int[] preorder, int[] inorder)
+        {
+            if (preorder == null || inorder == null || preorder.Length != inorder.Length) {
+
+                return null;
+            }
+            nodeMap.Clear();
+            for (int i = 0; i < inorder.Length; i++) {
+
+                nodeMap.Add(inorder[i], i);
+            }
+            return FindRootNode(preorder, inorder, 0, preorder.Length - 1, 0, inorder.Length - 1);
+        }
+
+        private static TreeNode FindRootNode(int[] preorder,int[] inorder,int preLeft,int preRight,int inLeft,int inRight) {
+
+            if (preLeft> preRight)
+            {              
+                return null;
+            }
+
+            var rootVal = preorder[preLeft]; 
+            var rootNode = new TreeNode(rootVal);
+            var rootIndex = nodeMap[rootVal];
+            rootNode.left = FindRootNode(preorder,inorder,preLeft+1,preLeft+rootIndex-inLeft,inLeft,rootIndex-1);
+            rootNode.right = FindRootNode(preorder, inorder, preLeft + rootIndex - inLeft + 1, preRight, rootIndex + 1, inRight);
+            return rootNode;
         }
     }
 }
