@@ -168,12 +168,13 @@ namespace Algorithm
         /// <returns></returns>
         public static string LongestPalindrome(string s)
         {
-            //动态规划
+            //动态规划(将i理解为字符串长度)
             var knowledge = new bool[1000, 1000];
             var result = "";
             if (s == null) {
                 return result;
             }
+           
             for (int i = 0; i < s.Length; i++) {
                 for (int j = 0; i + j < s.Length; j++) {
                     int m = i + j;

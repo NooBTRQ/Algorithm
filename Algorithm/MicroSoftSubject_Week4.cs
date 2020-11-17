@@ -236,6 +236,16 @@ namespace Algorithm
             return exampleCount;
         }
 
+        /// <summary>
+        /// 62. Unique Paths
+        /// A robot is located at the top-left corner of a m x n grid (marked 'Start' in the diagram below).
+        /// The robot can only move either down or right at any point in time.
+        /// The robot is trying to reach the bottom-right corner of the grid(marked 'Finish' in the diagram below).
+        /// How many possible unique paths are there?
+        /// </summary>
+        /// <param name="m"></param>
+        /// <param name="n"></param>
+        /// <returns></returns>
         public static int UniquePaths(int m, int n)
         {
             if (m * n == 1 || m * n == 2) return 1;
@@ -255,21 +265,197 @@ namespace Algorithm
             return matrix[m-1,n-1];
         }
 
+        /// <summary>
+        /// 64. Minimum Path Sum
+        /// Given a m x n grid filled with non-negative numbers, find a path from top left to bottom right, 
+        /// which minimizes the sum of all numbers along its path.
+        /// Note: You can only move either down or right at any point in time.
+        /// </summary>
+        /// <param name="grid"></param>
+        /// <returns></returns>
         public static int MinPathSum(int[][] grid)
         {
-            int[,] progress = new int[grid.Length, grid[0].Length];
-            for (int i = 0; i < progress.GetLength(0); i++) {
+            int[] progress = new int[grid[0].Length];
+            for (int i = 0; i < grid.Length; i++) {
 
-                for (int j = 0; j < progress.GetLength(1); j++) {
+                for (int j = 0; j < grid[0].Length; j++) {
 
-                    if (i == 0 && j == 0) { progress[i, j] = grid[i][j];continue; }
-                    if (i == 0) { progress[i, j] = progress[i, j - 1] + grid[i][j];continue; }
-                    if (j == 0) { progress[i, j] = progress[i-1, j] + grid[i][j]; continue; }
-                    progress[i, j] = Math.Min(progress[i - 1, j] + grid[i][j], progress[i, j - 1] + grid[i][j]);
+                    if (i == 0 && j == 0) { progress[j] = grid[i][j];continue; }
+                    if (i == 0) { progress[j] = progress[j - 1] + grid[i][j];continue; }
+                    if (j == 0) { progress[j] = progress[j] + grid[i][j]; continue; }
+                    progress[j] = Math.Min(progress[j-1] + grid[i][j], progress[j] + grid[i][j]);
                 }
             }
 
-            return progress[grid.Length - 1, grid[0].Length - 1];
+            return progress[grid[0].Length - 1];
+        }
+
+        /// <summary>
+        /// 516. Longest Palindromic Subsequence
+        /// Given a string s, find the longest palindromic subsequence's length in s. You may assume that the maximum length of s is 1000.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static int LongestPalindromeSubseq(string s)
+        {
+            if (s.Length == 0) return 0;
+            if (s.Length == 1) return 1;
+            int[,] tempResult = new int[s.Length,s.Length];
+
+            for (int i = s.Length-1; i >= 0; i--) {
+
+                for (int j = i ; j < s.Length; j++) {
+
+                    if (i == j) { tempResult[i, j] = 1; continue; }
+                    if (s[i] == s[j]) tempResult[i, j] = tempResult[i + 1, j - 1] + 2;
+                    if (s[i] != s[j]) tempResult[i, j] = Math.Max(tempResult[i, j - 1], tempResult[i + 1, j]);
+                }
+            }
+            return tempResult[0, s.Length - 1];
+        }
+
+        /// <summary>
+        /// 647. Palindromic Substrings
+        /// Given a string, your task is to count how many palindromic substrings in this string.
+        /// The substrings with different start indexes or end indexes are counted as different substrings even they consist of same characters.\
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static int CountSubstrings(string s)
+        {
+            if (s.Length == 0) return 0;
+            if (s.Length == 1) return 1;
+            //回文中心拓展
+            int ans = 0;
+            for (int i = 0; i < 2 * s.Length - 1; i++) {
+
+                int l = i / 2;
+                int r = i / 2 + i % 2;
+                while (l >= 0 && r < s.Length && s[l] == s[r]) {
+
+                    ans++;
+                    l--;
+                    r++;
+                }
+            }
+            return ans;
+        }
+
+        /// <summary>
+        /// 5602. 将 x 减到 0 的最小操作数
+        /// 给你一个整数数组 nums 和一个整数 x 。每一次操作时，你应当移除数组 nums 最左边或最右边的元素，然后从 x 中减去该元素的值。请注意，需要 修改 数组以供接下来的操作使用。
+        /// 如果可以将 x 恰好 减到 0 ，返回 最小操作数 ；否则，返回 -1 。
+        /// </summary>
+        /// <param name="nums"></param>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        public static int MinOperations(int[] nums, int x)
+        {
+            if (nums.Length == 0) return -1;
+            if (nums.Length == 1 && nums[0] != x) return -1;
+            if (nums.Length == 1 && nums[0] == x) return 1;
+
+            return MinOperationsDFS(nums, 0, nums.Length - 1, 0, x, 0);
+            
+        }
+
+        public static int MaximalSquare(char[][] matrix)
+        {
+            if (matrix.Length == 0) return 0;
+            var tempResult = new int[matrix[0].Length, matrix.Length];
+            int maxLenght = 0;
+            for (int j = 0; j < matrix.Length; j++) {
+
+                for (int i = 0; i < matrix[0].Length; i++) {
+                    if ((i == 0 || j == 0) && matrix[j][i] == '1') { tempResult[i, j] = 1; maxLenght = Math.Max(maxLenght,1); continue; }
+                    if (matrix[j][i] == '1') 
+                    { 
+                        tempResult[i, j] = Math.Min(Math.Min(tempResult[i - 1, j - 1], tempResult[i - 1, j]), tempResult[i, j - 1]) + 1;
+                        maxLenght = Math.Max(maxLenght, tempResult[i, j]);
+                    }
+                        
+                }
+            }
+
+            return maxLenght * maxLenght;
+        }
+
+        public static int UniquePathsWithObstacles(int[][] obstacleGrid)
+        {
+            if (obstacleGrid.Length == 0) return 0;
+            var dp = new int[obstacleGrid[0].Length];
+            for (int i = 0; i < obstacleGrid.Length; i++) {
+
+                for (int j = 0; j < obstacleGrid[0].Length; j++) {
+                    if (i == 0 && j == 0) {
+
+                        if (obstacleGrid[0][0] == 0)
+                        {
+                            dp[0] = 1;
+                        }
+                        else
+                        {
+
+                            dp[0] = 0;
+                        }
+                    }
+                    else if (i == 0)
+                    {
+                        if (obstacleGrid[i][j] == 0 && dp[j-1] != 0)
+                        {
+                            dp[j] = 1;
+                        }
+                        else
+                        {
+
+                            dp[j] = 0;
+                        }
+                    } else if (j == 0) {
+
+                        if (obstacleGrid[i][j] == 0 && dp[j] != 0)
+                        {
+                            dp[j] = 1;
+                        }
+                        else
+                        {
+
+                            dp[j] = 0;
+                        }
+                    }
+                    else {
+
+                        if (obstacleGrid[i][j] == 0)
+                        {
+                            dp[j] = dp[j - 1] + dp[j];
+                        }
+                        else
+                        {
+
+                            dp[j] = 0;
+                        }
+                    }
+                }
+            }
+
+            return dp[obstacleGrid[0].Length - 1];
+        }
+
+        public static int MinOperationsDFS(int[] nums, int left, int right,int currentSum,int x,int count) {
+
+            var minCount = -1;
+            if (left > right) return -1;
+            if (currentSum + nums[left] == x || currentSum + nums[right] == x) return count + 1;
+            if (currentSum + nums[left] > x && currentSum + nums[right] > x) return -1;
+            if (currentSum + nums[left] < x && left < nums.Length) {
+                var tempCount1 = MinOperationsDFS(nums, left + 1, right, currentSum + nums[left], x, count+1);
+                minCount = tempCount1;
+            }
+            if (currentSum + nums[right] < x && right > 0) {
+                var tempCount2 = MinOperationsDFS(nums, left, right - 1, currentSum + nums[right], x, count+1);
+                if (tempCount2 != -1 && minCount != -1) minCount = Math.Min(tempCount2, minCount);
+                if (tempCount2 == -1 || minCount == -1) minCount = Math.Max(tempCount2, minCount);
+            }
+            return minCount;
         }
 
         public static void DFSGenerateParenthesis(string tmpStr,int left,int right,List<string> res) {

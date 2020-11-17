@@ -12,19 +12,18 @@ namespace Algorithm
          */
         public static int RemoveDuplicates(int[] nums)
         {
-            List<int> result = new List<int>();
-            int a = 0;
-            for (int i = 0; i < nums.Length; i++){
-                if (i == 0) {
-                    result.Add(nums[0]);
-                    continue;
-                }
-                if (nums[i] != nums[i - 1]) {
-                    result.Add(nums[i]);
+            if (nums.Length == 0) return 0;
+            int index = 0;
+            for (int i = 1; i < nums.Length; i++) {
+
+                if (nums[i] != nums[index]) {
+
+                    nums[index + 1] = nums[i];
+                    index++;
                 }
             }
-            nums = result.ToArray();
-            return result.Count;
+
+            return index + 1;
         }
     }
 }
