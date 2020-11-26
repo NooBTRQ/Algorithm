@@ -440,6 +440,199 @@ namespace Algorithm
             return dp[obstacleGrid[0].Length - 1];
         }
 
+        public static int[,] SumMatrix { set; get; }
+
+        /// <summary>
+        /// 304. 二维区域和检索 - 矩阵不可变
+        /// 给定一个二维矩阵，计算其子矩形范围内元素的总和，该子矩阵的左上角为 (row1, col1) ，右下角为 (row2, col2)。
+        /// </summary>
+        /// <param name="row1"></param>
+        /// <param name="col1"></param>
+        /// <param name="row2"></param>
+        /// <param name="col2"></param>
+        /// <returns></returns>
+        public static int SumRegion(int row1, int col1, int row2, int col2)
+        {
+            return SumMatrix[col2 + 1 ,row2 + 1] - SumMatrix[col2 + 1, row1] - SumMatrix[col1, row2 + 1] + SumMatrix[col1, row1];
+
+        }
+
+        public static void BubbleSort(ref int[] nums) {
+
+            if (nums == null || nums.Length == 0) return;
+
+            for (int i = 0; i < nums.Length - 1; i++) {
+
+                for (int j = 0; j < nums.Length - 1 - i; j++) {
+
+                    if (nums[j] > nums[j + 1]) {
+
+                        int tempNum = nums[j];
+                        nums[j] = nums[j + 1];
+                        nums[j + 1] = tempNum;
+                    }
+                }
+            }
+        }
+
+        public static void InsertionSort(ref int[] nums) {
+
+            if (nums == null || nums.Length == 0) return;
+
+            for (int i = 1; i < nums.Length; i++)
+            {
+
+                for (int j = i; j > 0; j--)
+                {
+
+                    if (nums[j] < nums[j - 1]) {
+
+                        int temp = nums[j];
+                        nums[j] = nums[j - 1];
+                        nums[j - 1] = temp;
+                    }
+                }
+            }
+        }
+
+        public static void SelectionSort(ref int[] nums) {
+
+            if (nums == null || nums.Length == 0) return;
+
+            for (int i = 0; i < nums.Length; i++)
+            {
+                int minIndex = i;
+                for (int j = i + 1; j < nums.Length; j++)
+                {
+                    if (nums[minIndex] > nums[j]) {
+
+                        minIndex = j;
+                    }                  
+                }
+
+                int tempNum = nums[i];
+                nums[i] = nums[minIndex];
+                nums[minIndex] = tempNum;
+            }
+        }
+
+        /// <summary>
+        /// 归并排序
+        /// </summary>
+        /// <param name="nums"></param>
+        public static void MergeSort(ref int[] nums) {
+
+            MergeSort(ref nums, 0, nums.Length - 1);
+        }
+
+        private static void MergeSort(ref int[] nums,int left,int right) {
+
+            if (left < right) {
+
+                int mid = (left + right) / 2;
+                MergeSort(ref nums, left, mid);
+                MergeSort(ref nums, mid + 1, right);
+                MergeArr(ref nums, left, mid, right);
+            }
+        }
+
+        private static void MergeArr(ref int[] nums,int left,int mid,int right) {
+
+            int[] leftArr = new int[mid - left + 1];
+            int[] rightArr = new int[right - mid];
+
+            for (int i = left; i <= mid; i++) {
+
+                leftArr[i - left] = nums[i];
+            }
+            for (int j = mid + 1; j <= right; j++) {
+
+                rightArr[j - mid - 1] = nums[j];
+            }
+
+            int tempLeft = 0;
+            int tempRight = 0;
+            for (int i = 0; i < right - left + 1; i++) {
+
+                if (tempLeft < leftArr.Length && tempRight < rightArr.Length)
+                {
+
+                    if (leftArr[tempLeft] < rightArr[tempRight])
+                    {
+
+                        nums[left + i] = leftArr[tempLeft];
+                        tempLeft++;
+                    }
+                    else
+                    {
+
+                        nums[left + i] = rightArr[tempRight];
+                        tempRight++;
+                    }
+                }
+                else if (tempLeft >= leftArr.Length)
+                {
+
+                    nums[left + i] = rightArr[tempRight];
+                    tempRight++;
+                }
+                else if (tempRight >= rightArr.Length) {
+
+                    nums[left + i] = leftArr[tempLeft];
+                    tempLeft++;
+                }
+            }
+        }
+
+        public static void QuickSort(ref int[] nums) {
+
+            QuickSort(ref nums, 0, nums.Length - 1);
+        }
+
+        private static void QuickSort(ref int[] nums, int left,int right) {
+
+            if (left < right) {
+
+                var p = Partition(ref nums, left, right);
+                QuickSort(ref nums, left, p - 1);
+                QuickSort(ref nums, p + 1, right);
+            }
+        }
+
+        private static int Partition(ref int[] nums, int left, int right) {
+
+            int pivot = nums[right];
+            int i = left;
+            for (int j = left; j < right; j++) {
+
+                if (nums[j] < pivot) {
+
+                    int temp = nums[i];
+                    nums[i] = nums[j];
+                    nums[j] = temp;
+                    i++;
+                }
+            }
+
+            int temp1 = nums[i];
+            nums[i] = nums[right];
+            nums[right] = temp1;
+            return i;
+        }
+
+        public static void NumMatrix(int[][] matrix)
+        {
+            if (matrix.Length == 0) return;
+            SumMatrix = new int[matrix[0].Length + 1, matrix.Length + 1];            
+            for (int j = 1; j <= matrix.Length; j++) {
+
+                for (int i = 1; i <= matrix[0].Length; i++) {
+
+                    SumMatrix[i, j] = SumMatrix[i - 1, j] + SumMatrix[i, j - 1] - SumMatrix[i - 1, j - 1] + matrix[j-1][i-1];
+                }
+            }
+        }
+
         public static int MinOperationsDFS(int[] nums, int left, int right,int currentSum,int x,int count) {
 
             var minCount = -1;
