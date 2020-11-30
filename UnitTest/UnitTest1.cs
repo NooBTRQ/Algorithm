@@ -11,8 +11,8 @@ namespace UnitTest
         [TestMethod]
         public void TestMethod1()
         {
-            int[] data = new int[5] {5,2,1,6,3};
-            MicroSoftSubject_Week4.QuickSort(ref data);
+            var dic = new List<string>() { "hot", "dot", "dog", "lot", "log", "app" };
+            var result = MicroSoftSubject_Week4.LadderLength("hit", "cog", dic);
         }
     }
 }

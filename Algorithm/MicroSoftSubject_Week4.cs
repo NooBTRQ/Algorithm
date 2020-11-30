@@ -457,6 +457,161 @@ namespace Algorithm
 
         }
 
+        /// <summary>
+        /// 116. 填充每个节点的下一个右侧节点指针
+        /// 给定一个完美二叉树，其所有叶子节点都在同一层，每个父节点都有两个子节点。
+        /// 填充它的每个 next 指针，让这个指针指向其下一个右侧节点。如果找不到下一个右侧节点，则将 next 指针设置为 NULL。
+        /// 初始状态下，所有 next 指针都被设置为 NULL。
+        /// 提示：
+        /// 你只能使用常量级额外空间。
+        /// 使用递归解题也符合要求，本题中递归程序占用的栈空间不算做额外的空间复杂度。
+        /// </summary>
+        /// <param name="root"></param>
+        /// <returns></returns>
+        public static Node Connect(Node root)
+        {
+            //①BFS---------------------------------------------------------------------------
+            //if (root == null) return root;
+
+            //Queue<Node> queue = new Queue<Node>();
+            ////将第一层节点加入
+            //queue.Enqueue(root);
+
+            //while (queue.Count > 0) {
+            //    //记录每层节点的数量
+            //    int queueCount = queue.Count;
+            //    for (int i = 0; i < queueCount; i++) {
+
+            //        var tempNode = queue.Dequeue();
+
+            //        if (i < queueCount - 1) {
+            //            tempNode.next = queue.Peek();
+
+            //        }                   
+            //        //将下一层节点加入到队列中
+            //        if (tempNode.left != null) {
+
+            //            queue.Enqueue(tempNode.left);
+            //        }
+            //        if (tempNode.right != null)
+            //        {
+
+            //            queue.Enqueue(tempNode.right);
+            //        }
+            //    }
+            //}
+
+            //return root;
+
+            //②O(1)空间复杂度---------------------------------------------------------------------------
+            if (root == null) return root;
+            //从根节点开始
+            var leftNode = root;
+            while (leftNode != null && leftNode.left != null) {
+
+                Node head = leftNode;
+                while (head != null) {
+
+                    head.left.next = head.right;
+                    if (head.next != null) {
+
+                        head.right.next = head.next.left;
+                    }
+
+                    head = head.next;
+                }
+
+                //去到下一层的最左的节点
+                leftNode = leftNode.next;
+            }
+
+            return root;
+        }
+
+        /// <summary>
+        /// 102. 二叉树的层序遍历
+        /// 给你一个二叉树，请你返回其按 层序遍历 得到的节点值。 （即逐层地，从左到右访问所有节点）。
+        /// </summary>
+        /// <param name="root"></param>
+        /// <returns></returns>
+        public static IList<IList<int>> LevelOrder(TreeNode root)
+        {
+            
+            var result = new List<IList<int>>();
+            if (root == null) return result;
+            Queue<TreeNode> queue = new Queue<TreeNode>();
+            queue.Enqueue(root);
+            int level = 0;
+            while (queue.Count>0) {
+
+                result.Add(new List<int>());
+                int count = queue.Count;
+                for (int i = 0; i < count; i++) {
+
+                    var node = queue.Dequeue();
+                    result[level].Add(node.val);
+                    if (node.left != null) queue.Enqueue(node.left);
+                    if (node.right != null) queue.Enqueue(node.right);
+                }
+                level++;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 127. 单词接龙
+        /// 给定两个单词（beginWord 和 endWord）和一个字典，找到从 beginWord 到 endWord 的最短转换序列的长度。转换需遵循如下规则：
+        /// 每次转换只能改变一个字母。
+        /// 转换过程中的中间单词必须是字典中的单词。
+        /// 说明:
+        ///   如果不存在这样的转换序列，返回 0。
+        ///   所有单词具有相同的长度。
+        ///   所有单词只由小写字母组成。
+        ///   字典中不存在重复的单词。
+        ///   你可以假设 beginWord 和 endWord 是非空的，且二者不相同。
+        /// </summary>
+        /// <param name="beginWord"></param>
+        /// <param name="endWord"></param>
+        /// <param name="wordList"></param>
+        /// <returns></returns>
+        public static int LadderLength(string beginWord, string endWord, IList<string> wordList)
+        {
+            if (wordList.Count == 0 || beginWord.Length == 0 || endWord.Length == 0) return 0;
+            var queue = new Queue<string>();
+            queue.Enqueue(beginWord);
+            int level = 0;
+            while (queue.Count > 0) {
+                level++;
+                int count = queue.Count;
+                for (int i = 0; i < count; i++) {
+                    var currentLevelStr = queue.Dequeue();
+                    for (int j = wordList.Count - 1; j >= 0; j--) {
+                        if (IsWordCanChangeByOneChar(wordList[j], currentLevelStr))
+                        {
+                            if (wordList[j] == endWord) return ++level;
+                            queue.Enqueue(wordList[j]);
+                            wordList.RemoveAt(j);
+                        }
+                    }
+                }
+            }
+
+            return 0;
+        }
+
+        private static bool IsWordCanChangeByOneChar(string word1,string word2) {
+
+            int length = word1.Length;
+            int diffCount = 0;
+            for (int i = 0; i < length; i++) {
+
+                if (word1[i] != word2[i]) diffCount++;
+            }
+
+            return diffCount == 1;
+        }
+
         public static void BubbleSort(ref int[] nums) {
 
             if (nums == null || nums.Length == 0) return;
