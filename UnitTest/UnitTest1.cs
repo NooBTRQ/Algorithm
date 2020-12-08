@@ -11,8 +11,7 @@ namespace UnitTest
         [TestMethod]
         public void TestMethod1()
         {
-            var dic = new List<string>() { "hot", "dot", "dog", "lot", "log", "app" };
-            var result = MicroSoftSubject_Week4.LadderLength("hit", "cog", dic);
+            MicroSoftSubject_Week6.SortColors(new int[]{ 1,2,0});
         }
     }
 }
