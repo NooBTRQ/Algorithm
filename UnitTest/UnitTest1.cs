@@ -11,7 +11,7 @@ namespace UnitTest
         [TestMethod]
         public void TestMethod1()
         {
-            MicroSoftSubject_Week6.SortColors(new int[]{ 1,2,0});
+            var result = MicroSoftSubject_Week8.FindKthLargest(new int[] { 7,6,5,4,3,2,1},5);
         }
     }
 }
