@@ -522,7 +522,7 @@ namespace Algorithm
                 }
 
                 //去到下一层的最左的节点
-                leftNode = leftNode.next;
+                leftNode = leftNode.left;
             }
 
             return root;
