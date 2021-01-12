@@ -21,100 +21,95 @@ namespace Algorithm
             {
                 return s;
             }
+       
+            //构建并查集
+            UnionFind uf = new UnionFind(s.Length);
+            foreach (var pair in pairs) {
 
-            // 第 1 步：将任意交换的结点对输入并查集
-            int len = s.Length;
-            UnionFind unionFind = new UnionFind(len);
-            foreach (List<int> pair in pairs)
-            {
-                int index1 = pair[0];
-                int index2 = pair[1];
-                unionFind.union(index1, index2);
+                uf.Union(pair[0], pair[1]);
             }
 
-            // 第 2 步：构建映射关系
-            char[] charArray = s.ToCharArray();
-            // key：连通分量的代表元，value：同一个连通分量的字符集合（保存在一个优先队列中）
-            Dictionary<int, List<char>> hashMap = new Dictionary<int, List<char>>(len);
-            for (int i = 0; i < len; i++)
-            {
-                int root = unionFind.find(i);
-                if (hashMap.ContainsKey(root))
+            //构建映射关系
+            var charArr = s.ToCharArray();
+            Dictionary<int, List<char>> map = new Dictionary<int, List<char>>();
+            for (int i = 0; i < charArr.Length; i++) {
+
+                var root = uf.Find(i);
+                if (map.ContainsKey(root))
                 {
-                    hashMap[root].Add(charArray[i]);
-                    hashMap[root].Sort((x,y) => x < y ? 1 : -1);
-                }
-                else
-                {
-                    List<char> minHeap = new List<char>();
-                    minHeap.Add(charArray[i]);
-                    hashMap.Add(root, minHeap);
-                }
 
+                    map[root].Add(charArr[i]);                   
+                }
+                else {
+
+                    map[root] = new List<char>() { charArr[i] };
+                }
+            }
+            foreach(var kv in map) { 
+            
+                kv.Value.Sort((x, y) => x < y ? 1 : -1);
             }
 
-            // 第 3 步：重组字符串
-            StringBuilder stringBuilder = new StringBuilder();
-            for (int i = 0; i < len; i++)
-            {
-                int root = unionFind.find(i);
-                stringBuilder.Append(hashMap[root][0]);
+            StringBuilder result = new StringBuilder();
+
+            for (int i = 0; i < charArr.Length; i++) {
+
+                int root = uf.Find(i);
+                char c = map[root][map[root].Count - 1];
+                map[root].RemoveAt(map[root].Count - 1);
+                result.Append(c);
             }
-            return stringBuilder.ToString();
+
+            return result.ToString();
         }
 
+        /// <summary>
+        /// 并查集
+        /// </summary>
         private class UnionFind
         {
 
             private int[] parent;
-            /**
-             * 以 i 为根结点的子树的高度（引入了路径压缩以后该定义并不准确）
-             */
             private int[] rank;
+            public UnionFind(int n) {
 
-            public UnionFind(int n)
-            {
-                this.parent = new int[n];
-                this.rank = new int[n];
-                for (int i = 0; i < n; i++)
-                {
-                    this.parent[i] = i;
-                    this.rank[i] = 1;
+                parent = new int[n];
+                rank = new int[n];
+                for (int i = 0; i < n; i++) {
+
+                    parent[i] = i;
+                    rank[i] = 1;
                 }
             }
 
-            public void union(int x, int y)
-            {
-                int rootX = find(x);
-                int rootY = find(y);
-                if (rootX == rootY)
-                {
-                    return;
-                }
+            public void Union(int x, int y) {
+
+                int rootX = Find(x);
+                int rootY = Find(y);
+
+                if (rootX == rootY) return;
 
                 if (rank[rootX] == rank[rootY])
                 {
+
                     parent[rootX] = rootY;
-                    // 此时以 rootY 为根结点的树的高度仅加了 1
                     rank[rootY]++;
                 }
                 else if (rank[rootX] < rank[rootY])
                 {
+
                     parent[rootX] = rootY;
-                    // 此时以 rootY 为根结点的树的高度不变
                 }
-                else
-                {
-                    // 同理，此时以 rootX 为根结点的树的高度不变
+                else {
+
                     parent[rootY] = rootX;
                 }
             }
 
-            public int find(int x)
-            {
-                if (x != parent[x])
-                {
-                    parent[x] = find(parent[x]);
+            public int Find(int x) {
+                if (parent[x] != x) {
+
+                    parent[x] = Find(parent[x]);
                 }
                 return parent[x];
             }

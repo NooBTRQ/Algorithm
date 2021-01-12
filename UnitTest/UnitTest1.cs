@@ -11,7 +11,8 @@ namespace UnitTest
         [TestMethod]
         public void TestMethod1()
         {
-            var result = MicroSoftSubject_Week8.FindKthLargest(new int[] { 7,6,5,4,3,2,1},5);
+
+            MicroSoftSubject_Week11.SmallestStringWithSwaps("dcab", new List<IList<int>>() { new List<int>{ 0,3}, new List<int>{1,2 } });
         }
     }
 }
