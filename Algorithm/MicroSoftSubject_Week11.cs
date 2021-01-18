@@ -330,6 +330,12 @@ namespace Algorithm
 
         }
 
+        /// <summary>
+        /// 78. 子集
+        /// 给你一个整数数组 nums ，返回该数组所有可能的子集（幂集）。解集不能包含重复的子集。
+        /// </summary>
+        /// <param name="nums"></param>
+        /// <returns></returns>
         public static IList<IList<int>> Subsets(int[] nums)
         {
             var result = new List<IList<int>>();
@@ -350,6 +356,110 @@ namespace Algorithm
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// 133. 克隆图
+        /// 给你无向 连通 图中一个节点的引用，请你返回该图的 深拷贝（克隆）。
+        /// 图中的每个节点都包含它的值 val（int） 和其邻居的列表
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public static Node CloneGraph(Node node)
+        {
+            if (node == null) return null;
+
+            var newHead = new Node(node.val);
+            newHead.neighbors = node.neighbors;
+            var nodeQueue = new Queue<Node>();
+            var nodeDic = new Dictionary<int, Node>();
+            nodeQueue.Enqueue(newHead);
+            nodeDic[node.val] = newHead;
+            while (nodeQueue.Count > 0) {
+
+                int count = nodeQueue.Count;
+                for (int i = 0; i < count; i++) {
+                    var currentNode = nodeQueue.Dequeue();
+                    if (currentNode.neighbors == null) continue;
+                    var newNeighbors = new List<Node>();
+                    for (int j = 0; j < currentNode.neighbors.Count; j++) {
+                        
+                        if (nodeDic.ContainsKey(currentNode.neighbors[j].val))
+                        {
+
+                            newNeighbors.Add(nodeDic[currentNode.neighbors[j].val]);
+                        }
+                        else {
+
+                            var newNeighbor = new Node(currentNode.neighbors[j].val);
+                            newNeighbor.neighbors = currentNode.neighbors[j].neighbors;
+                            newNeighbors.Add(newNeighbor);
+                            nodeQueue.Enqueue(newNeighbor);
+                            nodeDic[newNeighbor.val] = newNeighbor;
+                        }
+                        
+                    }
+                    currentNode.neighbors = newNeighbors;
+                }
+            }
+            return newHead;
+        }
+
+        /// <summary>
+        /// 1232. 缀点成线
+        /// </summary>
+        /// <param name="coordinates"></param>
+        /// <returns></returns>
+        public static bool CheckStraightLine(int[][] coordinates)
+        {
+            int deltaX = coordinates[0][0], deltaY = coordinates[0][1];
+            int n = coordinates.Length;
+            for (int i = 0; i < n; ++i)
+            {
+                coordinates[i][0] -= deltaX;
+                coordinates[i][1] -= deltaY;
+            }
+            int A = coordinates[1][1], B = -coordinates[1][0];
+            for (int i = 2; i < n; ++i)
+            {
+                int x = coordinates[i][0], y = coordinates[i][1];
+                if (A * x + B * y != 0)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// 71. 简化路径
+        /// 以 Unix 风格给出一个文件的绝对路径，你需要简化它。或者换句话说，将其转换为规范路径。
+        /// 在 Unix 风格的文件系统中，一个点（.）表示当前目录本身；此外，两个点 （..） 表示将目录切换到上一级（指向父目录）；
+        /// 两者都可以是复杂相对路径的组成部分。更多信息请参阅：Linux / Unix中的绝对路径 vs 相对路径
+        /// 请注意，返回的规范路径必须始终以斜杠 / 开头，并且两个目录名之间必须只有一个斜杠 /。
+        /// 最后一个目录名（如果存在）不能以 / 结尾。此外，规范路径必须是表示绝对路径的最短字符串。
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static string SimplifyPath(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path)) return "";
+            if (!path.Contains("/")) return path + "/";
+            var pathArr = path.Split('/');
+            var pathList = new List<string>();
+            foreach (var str in pathArr) {
+
+                if (str == ".") continue;
+                else if (str == "..")
+                {
+
+                    if (pathList.Count > 0) pathList.RemoveAt(pathList.Count - 1);
+                }
+                else if (string.IsNullOrEmpty(str)) continue;
+                else pathList.Add(str);
+            }
+
+            return "/" + string.Join("/", pathList);
         }
 
         private static int MaxLengthDFS(IList<string> arr, int start, int bitMask) {
@@ -520,6 +630,30 @@ namespace Algorithm
             public int Size(int x)
             {
                 return sz[Find(x)];
+            }
+        }
+
+        public class Node
+        {
+            public int val;
+            public IList<Node> neighbors;
+
+            public Node()
+            {
+                val = 0;
+                neighbors = new List<Node>();
+            }
+
+            public Node(int _val)
+            {
+                val = _val;
+                neighbors = new List<Node>();
+            }
+
+            public Node(int _val, List<Node> _neighbors)
+            {
+                val = _val;
+                neighbors = _neighbors;
             }
         }
     }
