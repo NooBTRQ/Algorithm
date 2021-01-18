@@ -11,23 +11,8 @@ namespace UnitTest
         [TestMethod]
         public void TestMethod1()
         {
-            var node1 = new MicroSoftSubject_Week11.Node(1);
-            var node2 = new MicroSoftSubject_Week11.Node(2);
-            var node3 = new MicroSoftSubject_Week11.Node(3);
-            var node4 = new MicroSoftSubject_Week11.Node(4);
-            node1.neighbors.Add(node2);
-            node1.neighbors.Add(node4);
-
-            node2.neighbors.Add(node1);
-            node2.neighbors.Add(node3);
-
-            node3.neighbors.Add(node2);
-            node3.neighbors.Add(node4);
-
-            node4.neighbors.Add(node1);
-            node4.neighbors.Add(node3);
-
-            var result = MicroSoftSubject_Week11.CloneGraph(node1);
+            var data = new int[3] { 1, 2, 3 };
+            MicroSoftSubject_Week12.SubarraySum(data,3);
         }
 
 
