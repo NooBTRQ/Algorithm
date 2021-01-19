@@ -79,5 +79,79 @@ namespace Algorithm
             //}
             //return result;
         }
+
+        /// <summary>
+        /// 61. 旋转链表
+        /// 给定一个链表，旋转链表，将链表每个节点向右移动 k 个位置，其中 k 是非负数。
+        /// </summary>
+        /// <param name="head"></param>
+        /// <param name="k"></param>
+        /// <returns></returns>
+        public static ListNode RotateRight(ListNode head, int k)
+        {
+            if (head == null || head.next == null || k == 0) return head;
+            var tail = head;
+            int count = 1;
+            while (tail.next != null) {
+                tail = tail.next;
+                count++;
+            }
+            tail.next = head;
+
+            k = k % count;
+            k = count - k;
+            if (k == 0) return head;
+
+            while (k > 1) {
+
+                head = head.next;
+                k--;
+            }
+            var newHead = head.next;
+            head.next = null;
+
+            return newHead;
+        }
+
+        /// <summary>
+        /// 186. 翻转字符串里的单词 II
+        /// 
+        /// 给定一个字符串，逐个翻转字符串中的每个单词。
+        /// 注意：
+        ///   单词的定义是不包含空格的一系列字符
+        ///   输入字符串中不会包含前置或尾随的空格
+        ///   单词与单词之间永远是以单个空格隔开的
+        /// 进阶：使用 O(1) 额外空间复杂度的原地解法。
+        /// </summary>
+        /// <param name="s"></param>
+        public static void ReverseWords(char[] s)
+        {
+            if (s == null || s.Length == 0) return;
+
+            for (int i = 0; i < s.Length / 2; i++) {
+
+                char temp = s[i];
+                s[i] = s[s.Length - i - 1];
+                s[s.Length - 1 - i] = temp;
+            }
+
+            int head = 0;
+            int tail = 0;
+            while (tail < s.Length) {
+
+                while (tail < s.Length && s[tail] != ' ') {
+
+                    tail++;
+                }
+
+                for (int i = head; i < (tail + head) / 2; i++) {
+                    char tempChar = s[i];
+                    s[i] = s[tail - 1 - (i - head)];
+                    s[tail - 1 - (i - head)] = tempChar;
+                }
+
+                head = ++tail;
+            }
+        }
     }
 }
