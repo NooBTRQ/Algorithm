@@ -11,8 +11,8 @@ namespace UnitTest
         [TestMethod]
         public void TestMethod1()
         {
-            var data = new char[] { 't', 'h', 'e'};
-            MicroSoftSubject_Week12.ReverseWords(data);
+            var data = new int[] {6,5,4,6 };
+            var result = MicroSoftSubject_Week12.MinCharacters("ace","abe");
         }
 
 
