@@ -365,27 +365,42 @@ namespace Algorithm
                 var preNode = dummyHead;
                 while (current != null) {
 
-                    ListNode head1 = current;
-                    ListNode head2 = current;
+                    ListNode head1 = current;                  
                     ListNode tail1 = current;
-                    ListNode tail2 = current;
-                    for (int i = 1; i <= subLength && current != null; i++) {
-
-                        head2 = head2.next;
+                    for (int i = 1; i < subLength && tail1.next != null; i++) {
                         tail1 = tail1.next;
                     }
-                    head1.next = null;
-                    current = head2;
-                    for (int i = 1; i < subLength && current != null; i++) {
 
-                        current = current.next;
+                    ListNode head2 = null;
+                    ListNode tail2 = null;
+                    if (tail1.next != null)
+                    {
+
+                        head2 = tail1.next;
+                        tail2 = tail1.next;
+                        tail1.next = null;
+                        for (int i = 1; i < subLength && tail2.next != null; i++)
+                        {
+
+                            tail2 = tail2.next;
+                        }
+                        current = tail2.next;
+                        tail2.next = null;
                     }
-                    head2.next = null;
+                    else {
+
+                        current = null;
+                    }
+                                      
                     ListNode mergedList = MergeList(head1, head2);
                     preNode.next = mergedList;
+                    while (preNode.next != null) {
+
+                        preNode = preNode.next;
+                    }
+                    preNode.next = current;
                 }
             }
-
             return dummyHead.next;
         }
 
@@ -399,7 +414,30 @@ namespace Algorithm
         /// <returns></returns>
         public static TreeNode InorderSuccessor(TreeNode root, TreeNode p)
         {
-            
+            if (p.right != null)
+            {
+                p = p.right;
+                while (p.left != null) p = p.left;
+                return p;
+            }
+
+            Stack<TreeNode> stack = new Stack<TreeNode>();
+            int inorder = int.MinValue;
+
+            while (stack.Count > 0 || root != null)
+            {
+                while (root != null)
+                {
+                    stack.Push(root);
+                    root = root.left;
+                }
+                root = stack.Pop();
+                if (inorder == p.val) return root;
+                inorder = root.val;
+                root = root.right;
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -658,11 +696,13 @@ namespace Algorithm
                 if (currentNode1.val <= currentNode2.val)
                 {
                     currentNode.next = currentNode1;
+                    currentNode = currentNode.next;
                     currentNode1 = currentNode1.next;
                 }
                 else {
 
                     currentNode.next = currentNode2;
+                    currentNode = currentNode.next;
                     currentNode2 = currentNode2.next;
                 }
             }
