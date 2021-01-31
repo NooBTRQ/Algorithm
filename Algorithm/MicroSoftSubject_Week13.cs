@@ -207,6 +207,96 @@ namespace Algorithm
             return result;
         }
 
+        /// <summary>
+        /// 419. 甲板上的战舰
+        /// 给定一个二维的甲板， 请计算其中有多少艘战舰。 战舰用 'X'表示，空位用 '.'表示。 你需要遵守以下规则：
+        ///   给你一个有效的甲板，仅由战舰或者空位组成。
+        ///   战舰只能水平或者垂直放置。换句话说,战舰只能由 1xN(1 行, N 列)组成，或者 Nx1(N 行, 1 列)组成，其中N可以是任意大小。
+        ///   两艘战舰之间至少有一个水平或垂直的空位分隔 - 即没有相邻的战舰。
+        /// </summary>
+        /// <param name="board"></param>
+        /// <returns></returns>
+        public static int CountBattleships(char[][] board)
+        {
+            if (board == null || board.Length == 0) return 0;
+            var result = 0;
+            //寻找舰头
+            for (int i = 0; i < board.Length; i++) {
+
+                for (int j = 0; j < board[0].Length; j++) {
+
+                    if (board[i][j] == 'X' && (i == 0 || board[i - 1][j] == '.') && (j == 0 || board[i][j - 1] == '.')) {
+
+                        result++;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 722. 删除注释
+        /// 给一个 C++ 程序，删除程序中的注释。这个程序source是一个数组，其中source[i]表示第i行源码。 这表示每行源码由\n分隔。
+        /// 在 C++ 中有两种注释风格，行内注释和块注释。
+        /// 字符串// 表示行注释，表示//和其右侧的其余字符应该被忽略。
+        /// 字符串/* 表示一个块注释，它表示直到*/的下一个（非重叠）出现的所有字符都应该被忽略。
+        /// （阅读顺序为从左到右）非重叠是指，字符串/*/并没有结束块注释，因为注释的结尾与开头相重叠。
+        /// 第一个有效注释优先于其他注释：如果字符串//出现在块注释中会被忽略。 
+        /// 同样，如果字符串/*出现在行或块注释中也会被忽略。
+        /// 如果一行在删除注释之后变为空字符串，那么不要输出该行。即，答案列表中的每个字符串都是非空的。
+        /// 样例中没有控制字符，单引号或双引号字符。比如，source = "string s = "/* Not a comment. */";" 不会出现在测试样例里。
+        /// （此外，没有其他内容（如定义或宏）会干扰注释。）
+        /// 我们保证每一个块注释最终都会被闭合， 所以在行或块注释之外的/*总是开始新的注释。
+        /// 最后，隐式换行符可以通过块注释删除。 有关详细信息，请参阅下面的示例。
+        /// 从源代码中删除注释后，需要以相同的格式返回源代码。
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static IList<string> RemoveComments(string[] source)
+        {
+            bool inBlock = false;
+            StringBuilder newLine = new StringBuilder();
+            var result = new List<string>();
+            foreach (var str in source) {
+
+                if (!inBlock) newLine = new StringBuilder();
+                int i = 0;
+                while (i<str.Length) {
+
+                    if (!inBlock && i+1 < str.Length && str[i] == '/' && str[i + 1] == '/')
+                    {
+                        break;
+                    }
+                    else if (!inBlock && i + 1 < str.Length && str[i] == '/' && str[i + 1] == '*')
+                    {
+
+                        i++;
+                        inBlock = true;
+                    }
+                    else if (inBlock && i+1<str.Length && str[i] == '*' && str[i + 1] == '/')
+                    {
+
+                        i++;
+                        inBlock = false;
+                    }
+                    else if(!inBlock) {
+
+                        newLine.Append(str[i]);
+                    }
+                    i++;
+                }
+
+                if (!inBlock && newLine.Length > 0) {
+
+                    result.Add(newLine.ToString());
+                }
+                
+            }
+
+            return result;
+        }
+
         private static void CombinationSumDFS(int[] candidates, int target, int idx, List<int> combine, List<IList<int>> result) {
 
             if (idx == candidates.Length) return;
@@ -224,6 +314,105 @@ namespace Algorithm
                 CombinationSumDFS(candidates, target - candidates[idx], idx, combine, result);
                 combine.Remove(candidates[idx]);
             }
+        }
+    }
+
+    /// <summary>
+    /// 384. 打乱数组
+    /// 给你一个整数数组 nums ，设计算法来打乱一个没有重复元素的数组。
+    /// 实现 Solution class:
+    ///   Solution(int[] nums) 使用整数数组 nums 初始化对象
+    ///   int[] reset() 重设数组到它的初始状态并返回
+    ///   int[] shuffle() 返回数组随机打乱后的结果
+    /// </summary>
+    public class Solution
+    {
+        private int[] OriginalArr;
+        private int[] ShuffleArr;
+        Random random;
+        public Solution(int[] nums)
+        {
+            OriginalArr = (int [])nums.Clone();
+            ShuffleArr = (int[])nums.Clone();
+            random = new Random();
+        }
+
+        /** Resets the array to its original configuration and return it. */
+        public int[] Reset()
+        {
+            ShuffleArr = (int[])OriginalArr.Clone();
+            return ShuffleArr;
+        }
+
+        /** Returns a random shuffling of the array. */
+        public int[] Shuffle()
+        {
+            for (int i = 0; i < ShuffleArr.Length; i++) {
+
+                var swapIndex = random.Next(i,ShuffleArr.Length);
+                var temp = ShuffleArr[i];
+                ShuffleArr[i] = ShuffleArr[swapIndex];
+                ShuffleArr[swapIndex] = temp;
+            }
+
+            return ShuffleArr;
+        }
+    }
+
+    /// <summary>
+    /// 380. 常数时间插入、删除和获取随机元素
+    /// 设计一个支持在平均 时间复杂度 O(1) 下，执行以下操作的数据结构。
+    /// insert(val)：当元素 val 不存在时，向集合中插入该项。
+    /// remove(val)：元素 val 存在时，从集合中移除该项。
+    /// getRandom：随机返回现有集合中的一项。每个元素应该有相同的概率被返回。
+    /// </summary>
+    public class RandomizedSet
+    {
+        private List<int> itemList;
+        private Dictionary<int, int> itemMap;
+        private Random random;
+        /** Initialize your data structure here. */
+        public RandomizedSet()
+        {
+            itemList = new List<int>();
+            itemMap = new Dictionary<int, int>();
+            random = new Random();
+        }
+
+        /** Inserts a value to the set. Returns true if the set did not already contain the specified element. */
+        public bool Insert(int val)
+        {
+            if (!itemMap.ContainsKey(val)) {
+
+                itemList.Add(val);
+                itemMap.Add(val, itemList.Count - 1);
+                return true;
+            }
+            return false;
+        }
+
+        /** Removes a value from the set. Returns true if the set contained the specified element. */
+        public bool Remove(int val)
+        {
+            if (itemMap.ContainsKey(val)) {
+
+                int valIndex = itemMap[val];
+
+                itemList[valIndex] = itemList[itemList.Count - 1];
+                itemMap[itemList[valIndex]] = valIndex;
+                itemList.RemoveAt(itemList.Count - 1);
+                itemMap.Remove(val);
+                return true;
+            }
+
+            return false;
+        }
+
+        /** Get a random element from the set. */
+        public int GetRandom()
+        {
+            var randomNum = random.Next(itemList.Count);
+            return itemList[randomNum];
         }
     }
 }
