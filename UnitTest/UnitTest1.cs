@@ -12,7 +12,7 @@ namespace UnitTest
         public void TestMethod1()
         {
 
-            var result = MicroSoftSubject_Week14.BuildTree(new int[] {3,9,20,15,7 }, new int[] { 9, 3, 15, 20, 7 });
+            var result = SpringWeek_1.Fib(5);
         }
 
 
