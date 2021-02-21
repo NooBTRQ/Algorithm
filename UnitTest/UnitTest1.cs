@@ -12,9 +12,7 @@ namespace UnitTest
         public void TestMethod1()
         {
 
-            var result = SpringWeek_1.Fib(5);
+            var res = SpringWeek_1.LongestSubarray(new int[] { 4, 2, 2, 2, 4, 4, 2, 2 },0);
         }
-
-
     }
 }
