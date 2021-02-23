@@ -65,5 +65,41 @@ namespace Algorithm
             head.next = null;
             return p;
         }
+
+        /// <summary>
+        /// 1052. 爱生气的书店老板
+        /// 今天，书店老板有一家店打算试营业 customers.length 分钟。每分钟都有一些顾客（customers[i]）会进入书店，所有这些顾客都会在那一分钟结束后离开。
+        /// 在某些时候，书店老板会生气。 如果书店老板在第 i 分钟生气，那么 grumpy[i] = 1，否则 grumpy[i] = 0。 当书店老板生气时，那一分钟的顾客就会不满意，不生气则他们是满意的。
+        /// 书店老板知道一个秘密技巧，能抑制自己的情绪，可以让自己连续 X 分钟不生气，但却只能使用一次。
+        /// 请你返回这一天营业下来，最多有多少客户能够感到满意的数量。
+        /// </summary>
+        /// <param name="customers"></param>
+        /// <param name="grumpy"></param>
+        /// <param name="X"></param>
+        /// <returns></returns>
+        public static int MaxSatisfied(int[] customers, int[] grumpy, int X)
+        {
+            var baseSum = 0;
+            for (int i = 0; i < grumpy.Length; i++) {
+
+                baseSum += (1 - grumpy[i]) * customers[i];
+            }
+
+            int maxSum = 0;
+            for (int i = 0; i < X; i++) {
+
+                maxSum += grumpy[i] * customers[i];
+            }
+            int tempSum = maxSum;
+            for (int i = 1; i <= grumpy.Length - X; i++) {
+
+                tempSum = tempSum - grumpy[i - 1] * customers[i - 1] + grumpy[i + X - 1] * customers[i + X - 1];
+                maxSum = Math.Max(maxSum, tempSum);
+            }
+            baseSum += maxSum;
+            return baseSum;
+        }
+
+
     }
 }

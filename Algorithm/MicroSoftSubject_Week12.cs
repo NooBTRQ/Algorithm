@@ -47,8 +47,36 @@ namespace Algorithm
         /// <returns></returns>
         public static int SubarraySum(int[] nums, int k)
         {
-            // 暴力
             if (nums == null || nums.Length == 0) return 0;
+
+            int left = 0;
+            int right = 0;
+            int res = 0;
+            int tempSum = 0;
+            while (right < nums.Length) {
+
+                if (tempSum < k)
+                {
+                    right++;
+                    tempSum += nums[right];
+                }
+                else if (tempSum == k)
+                {
+                    tempSum -= nums[left];
+                    res++;
+                    left++;
+                }
+                else {
+                    tempSum -= nums[left];
+                    if (left == right) {
+
+                        right++;
+                        tempSum += nums[right];
+                    }
+                    left++;
+                }
+            }
+            return res;
 
             // 前缀和优化
             var perSumDic = new Dictionary<int, int>() { { 0, 1 } };
@@ -72,7 +100,7 @@ namespace Algorithm
             //int[] sumArr = new int[nums.Length];
             //for (int len = 1; len <= nums.Length; len++) {
 
-            //    for (int i = 0; qi + len <= nums.Length; i++) {
+            //    for (int i = 0; i + len <= nums.Length; i++) {
             //        sumArr[i] += nums[i + len - 1];
             //        if (sumArr[i] == k) result++;
             //    }
