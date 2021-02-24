@@ -100,6 +100,93 @@ namespace Algorithm
             return baseSum;
         }
 
+        /// <summary>
+        /// 832. 翻转图像
+        /// 给定一个二进制矩阵 A，我们想先水平翻转图像，然后反转图像并返回结果。
+        /// 水平翻转图片就是将图片的每一行都进行翻转，即逆序。例如，水平翻转[1, 1, 0] 的结果是[0, 1, 1]。
+        /// 反转图片的意思是图片中的 0 全部被 1 替换， 1 全部被 0 替换。例如，反转[0, 1, 1] 的结果是[1, 0, 0]。
+        /// </summary>
+        /// <param name="A"></param>
+        /// <returns></returns>
+        public static int[][] FlipAndInvertImage(int[][] A)
+        {
+            for (int i = 0; i < A.Length; i++) {
 
+                int left = 0;
+                int right = A[i].Length - 1;
+                while (left <= right) {
+
+                    var leftNum = A[i][left];
+                    A[i][left] = A[i][right] ^ 1;
+                    A[i][right] = leftNum ^ 1;
+                    left++;
+                    right--;
+                }
+            }
+
+            return A;
+        }
+
+        /// <summary>
+        /// 剑指 Offer 16. 数值的整数次方
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public static double MyPow(double x, int n)
+        {
+            //快速幂
+            if (x == 0) return 0;
+            long b = n;
+            double res = 1.0;
+            if (b < 0)
+            {
+                x = 1 / x;
+                b = -b;
+            }
+            while (b > 0)
+            {
+                if ((b & 1) == 1) res *= x;
+                x *= x;
+                b >>= 1;
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// 剑指 Offer 26. 树的子结构
+        /// 输入两棵二叉树A和B，判断B是不是A的子结构。(约定空树不是任意一个树的子结构)
+        /// B是A的子结构， 即 A中有出现和B相同的结构和节点值。
+        /// </summary>
+        /// <param name="A"></param>
+        /// <param name="B"></param>
+        /// <returns></returns>
+        public static bool IsSubStructure(TreeNode A, TreeNode B)
+        {
+            if (A == null && B == null) return true;
+            if (B == null) return false;
+            if (A == null) return false;
+            return IsSubStructureDFS(A, B, B);
+        }
+
+        public static bool IsSubStructureDFS(TreeNode A, TreeNode B,TreeNode originB) {
+
+            if (A == null && B == null) return true;
+            if (B == null) return true ;
+            if (A == null) return false;
+
+            if (A.val == B.val)
+            {
+                var res1 = IsSubStructureDFS(A.left, B.left, originB);
+                var res2 = IsSubStructureDFS(A.right, B.right, originB);
+                var res3 = IsSubStructureDFS(A.left, originB, originB);
+                var res4 = IsSubStructureDFS(A.right, originB, originB);
+                return (res1 && res2) || res3 || res4;
+            }
+            else {
+
+                return IsSubStructureDFS(A.left, originB, originB) || IsSubStructureDFS(A.right, originB, originB);
+            }
+        }
     }
 }
