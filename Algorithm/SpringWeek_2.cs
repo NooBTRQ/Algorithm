@@ -188,5 +188,166 @@ namespace Algorithm
                 return IsSubStructureDFS(A.left, originB, originB) || IsSubStructureDFS(A.right, originB, originB);
             }
         }
+
+        /// <summary>
+        /// 867. 转置矩阵
+        /// 给你一个二维整数数组 matrix， 返回 matrix 的 转置矩阵 。
+        /// 矩阵的 转置 是指将矩阵的主对角线翻转，交换矩阵的行索引与列索引。
+        /// </summary>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
+        public static int[][] Transpose(int[][] matrix)
+        {
+            int m = matrix.Length, n = matrix[0].Length;
+            int[][] transposed = new int[n][];
+            for (int i = 0; i < m; i++)
+            {
+                transposed[i] = new int[n];
+                for (int j = 0; j < n; j++)
+                {
+                    transposed[j][i] = matrix[i][j];
+                }
+            }
+            return transposed;
+        }
+    }
+
+    /// <summary>
+    /// 剑指 Offer 41. 数据流中的中位数
+    /// 如何得到一个数据流中的中位数？如果从数据流中读出奇数个数值，那么中位数就是所有数值排序之后位于中间的数值。
+    /// 如果从数据流中读出偶数个数值，那么中位数就是所有数值排序之后中间两个数的平均值。
+    /// 例如，
+    /// [2,3,4] 的中位数是 3
+    /// [2,3] 的中位数是(2 + 3) / 2 = 2.5
+    /// 设计一个支持以下两种操作的数据结构：
+    /// void addNum(int num) - 从数据流中添加一个整数到数据结构中。
+    /// double findMedian() - 返回目前所有元素的中位数。
+    /// </summary>
+    public class MedianFinder
+    {
+        private List<int> minHeap;
+        private List<int> maxHeap;
+        /** initialize your data structure here. */
+        public MedianFinder()
+        {
+            minHeap = new List<int>() { 0};
+            maxHeap = new List<int>() { 0};
+        }
+
+        public void AddNum(int num)
+        {
+            if (minHeap.Count == 1 || num >= minHeap[1])
+            {
+
+                minHeap.Add(num);
+                minHeapfyDownToUp(minHeap);
+            }
+            else {
+
+                maxHeap.Add(num);
+                maxHeapfyDownToUp(maxHeap);
+            }
+
+            if (minHeap.Count == maxHeap.Count) return;
+            else if (minHeap.Count > maxHeap.Count + 1)
+            {
+
+                maxHeap.Add(minHeap[1]);
+                maxHeapfyDownToUp(maxHeap);
+
+                minHeap[1] = minHeap[minHeap.Count - 1];
+                minHeap.RemoveAt(minHeap.Count - 1);
+                minHeapfyUpToDown(minHeap);
+
+            }
+            else if (minHeap.Count + 1 < maxHeap.Count) {
+                minHeap.Add(maxHeap[1]);
+                minHeapfyDownToUp(minHeap);
+
+                maxHeap[1] = maxHeap[maxHeap.Count - 1];
+                maxHeap.RemoveAt(maxHeap.Count - 1);
+                maxHeapfyUpToDown(maxHeap);
+            }
+        }
+
+        public double FindMedian()
+        {
+            if (minHeap.Count == maxHeap.Count) return (minHeap[1] + maxHeap[1]) / 2.0;
+            else if (minHeap.Count > maxHeap.Count) return minHeap[1];
+            else return maxHeap[1];
+        }
+
+        private void minHeapfyDownToUp(List<int> heap) {
+
+            int index = heap.Count - 1;
+            int swapIndex = index;
+            while (index > 1) {
+
+                if (heap[index] < heap[index >> 1]) {
+
+                    swapIndex = index >> 1;
+                }
+                if (index == swapIndex) break;
+                int temp = heap[index];
+                heap[index] = heap[swapIndex];
+                heap[swapIndex] = temp;
+                index = swapIndex;
+            }
+        }
+
+        private void maxHeapfyDownToUp(List<int> heap)
+        {
+
+            int index = heap.Count - 1;
+            int swapIndex = index;
+            while (index > 1)
+            {
+
+                if (heap[index] > heap[index >> 1])
+                {
+
+                    swapIndex = index >> 1;
+                }
+                if (index == swapIndex) break;
+                int temp = heap[index];
+                heap[index] = heap[swapIndex];
+                heap[swapIndex] = temp;
+                index = swapIndex;
+            }
+        }
+
+        private void minHeapfyUpToDown(List<int> heap) {
+
+            int index = 1;
+            int swapIndex = index;
+            while (index < heap.Count) {
+
+                if (index * 2 < heap.Count && heap[index] > heap[index * 2]) swapIndex = index * 2;
+                if (index * 2 + 1 < heap.Count && heap[swapIndex] > heap[index * 2 + 1]) swapIndex = index * 2 + 1;
+                if (index == swapIndex) break;
+                int temp = heap[index];
+                heap[index] = heap[swapIndex];
+                heap[swapIndex] = temp;
+                index = swapIndex;
+            }
+        }
+
+        private void maxHeapfyUpToDown(List<int> heap)
+        {
+
+            int index = 1;
+            int swapIndex = index;
+            while (index < heap.Count)
+            {
+
+                if (index * 2 < heap.Count && heap[index] < heap[index * 2]) swapIndex = index * 2;
+                if (index * 2 + 1 < heap.Count && heap[swapIndex] < heap[index * 2 + 1]) swapIndex = index * 2 + 1;
+                if (index == swapIndex) break;
+                int temp = heap[index];
+                heap[index] = heap[swapIndex];
+                heap[swapIndex] = temp;
+                index = swapIndex;
+            }
+        }
     }
 }
